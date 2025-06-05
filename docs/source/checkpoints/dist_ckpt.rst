@@ -1,5 +1,8 @@
+.. _dist-ckpt-user-guide-label:
+
 NeMo Distributed Checkpoint User Guide
 ======================================
+
 
 This guide provides details about the distributed checkpoints best practices from NeMo Megatron Core.
 
@@ -44,6 +47,14 @@ The following figure illustrates asynchronous saving in NeMo Framework, where ch
 
 *Figure 2. Asynchronous saving in NeMo Framework saves checkpoint at the background in parallel with training*
 
+This asynchronous behavior for distributed checkpoints is typically enabled if the ``DistributedCheckpointIO`` instance (often used internally by NeMo for distributed saving) is created with its ``async_save`` parameter set to true. In NeMo, this can be influenced by configuration flags passed on the command line:
+
+*   ``model.enable_async_ckpt=True``: This flag can contribute to enabling asynchronous operations for ``DistributedCheckpointIO``.
+*   ``model.enable_optimized_async_ckpt=True``: This flag may enable further specific optimizations within NeMo's asynchronous checkpointing logic for distributed checkpoints.
+
+Typically, if either ``model.enable_async_ckpt=True`` or ``model.enable_optimized_async_ckpt=True`` is set in the configuration, the underlying ``DistributedCheckpointIO`` will be configured for asynchronous saving.
+It's also important to configure asynchronous saving via the experiment manager for the PyTorch Lightning ``ModelCheckpoint`` callback, usually via ``exp_manager.checkpoint_callback_params.async_save=True`` (see :ref:`Experiment Manager <exp-manager-label>`).
+
 
 Parameter Tuning
 ----------------
@@ -80,6 +91,16 @@ Here are best practices for configuring distributed checkpoints in NeMo:
 
         	dist_ckpt_load_strictness: null
 
+
+These settings are typically configured in your YAML file under the ``model`` section (e.g., ``model.dist_ckpt_format`` or ``model.dist_ckpt_torch_dist_multiproc``). You can override them from the command line when launching a NeMo script (e.g., ``megatron_gpt_pretraining.py`` using Hydra syntax):
+
+*   **Enable Distributed Checkpointing (Recommended Format):**
+    Corresponds to ``model.dist_ckpt_format='torch_dist'``.
+    Command line: ``python your_script.py model.dist_ckpt_format=torch_dist``
+
+*   **Control Parallel Save Processes for `torch_dist`:**
+    Corresponds to ``model.dist_ckpt_torch_dist_multiproc=<value>``. This sets the number of extra processes per rank used during checkpoint save. Default is 2.
+    Command line: ``python your_script.py model.dist_ckpt_torch_dist_multiproc=4``
 
 Here's a summary of the checkpoint format options and related parameters:
 

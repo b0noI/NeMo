@@ -48,6 +48,29 @@ We can configure the ``ModelCheckpoint`` via YAML or CLI:
         # choose how many total checkpoints to save
         checkpoint_callback_params.save_top_k=5
 
+        # configure how often to save checkpoints (e.g., every N training steps)
+        # Common options include every_n_train_steps, every_n_epochs, or train_time_interval.
+        # For step-based saving:
+        checkpoint_callback_params.every_n_train_steps=1000
+
+        # To enable asynchronous checkpoint saving (checkpoints are written in background threads)
+        # This allows training to continue while checkpoints are written to storage, reducing idle time.
+        checkpoint_callback_params.async_save=True
+
+You can override these PyTorch Lightning ``ModelCheckpoint`` parameters from the command line using Hydra syntax. For example:
+
+*   **Control How Many Checkpoints are Saved (`save_top_k`):**
+    Command line: ``python your_script.py exp_manager.checkpoint_callback_params.save_top_k=10``
+    A value of ``-1`` for ``save_top_k`` typically means all checkpoints are kept.
+
+*   **Control Checkpointing Frequency (e.g., every 25 training steps):**
+    Command line: ``python your_script.py exp_manager.checkpoint_callback_params.every_n_train_steps=25``
+
+*   **Enable/Disable Asynchronous Checkpointing (PTL ModelCheckpoint):**
+    Command line: ``python your_script.py exp_manager.checkpoint_callback_params.async_save=True``
+
+It's important to note that for distributed training scenarios, especially when using NeMo's ``DistributedCheckpointIO``, model-specific flags might also influence asynchronous behavior. Flags such as ``model.enable_async_ckpt=True`` or ``model.enable_optimized_async_ckpt=True`` can provide more specialized control or optimizations for asynchronous distributed checkpoints. Refer to the :ref:`NeMo Distributed Checkpoint User Guide <dist-ckpt-user-guide-label>` for more details on these advanced distributed checkpointing options.
+
 Resume Training
 ---------------
 
