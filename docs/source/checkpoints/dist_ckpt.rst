@@ -47,14 +47,11 @@ The following figure illustrates asynchronous saving in NeMo Framework, where ch
 
 *Figure 2. Asynchronous saving in NeMo Framework saves checkpoint at the background in parallel with training*
 
-This asynchronous behavior for distributed checkpoints is typically enabled if the ``DistributedCheckpointIO`` instance (often used internally by NeMo for distributed saving) is created with its ``async_save`` parameter set to true. In NeMo, this can be influenced by configuration flags passed on the command line:
+This asynchronous behavior for distributed checkpoints is typically enabled if the ``DistributedCheckpointIO`` instance (often used internally by NeMo for distributed saving) is created with its ``async_save`` parameter set to true. In NeMo, this can be influenced by configuration flags passed on the command line (e.g., when using Hydra):
 
-*   ``model.enable_async_ckpt=True``: This flag can contribute to enabling asynchronous operations for ``DistributedCheckpointIO``.
-*   ``model.enable_optimized_async_ckpt=True``: This flag may enable further specific optimizations within NeMo's asynchronous checkpointing logic for distributed checkpoints.
+*   ``model.enable_async_ckpt=True``: This flag, when set in the Hydra configuration, contributes to enabling asynchronous operations for ``DistributedCheckpointIO``. If this flag is true, ``DistributedCheckpointIO`` is generally configured for asynchronous saving.
 
-Typically, if either ``model.enable_async_ckpt=True`` or ``model.enable_optimized_async_ckpt=True`` is set in the configuration, the underlying ``DistributedCheckpointIO`` will be configured for asynchronous saving.
-It's also important to configure asynchronous saving via the experiment manager for the PyTorch Lightning ``ModelCheckpoint`` callback, usually via ``exp_manager.checkpoint_callback_params.async_save=True`` (see :ref:`Experiment Manager <exp-manager-label>`).
-
+It's also important to configure the general asynchronous saving for the PyTorch Lightning ``ModelCheckpoint`` callback via the experiment manager, usually using ``exp_manager.checkpoint_callback_params.async_save=True`` (see :ref:`Experiment Manager <exp-manager-label>`). This controls the asynchronicity of the PTL callback itself, which then invokes the underlying checkpoint IO mechanism (like ``DistributedCheckpointIO``).
 
 Parameter Tuning
 ----------------

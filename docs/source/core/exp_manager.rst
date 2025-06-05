@@ -1,4 +1,3 @@
-
 .. _exp-manager-label:
 
 Experiment Manager
@@ -69,7 +68,7 @@ You can override these PyTorch Lightning ``ModelCheckpoint`` parameters from the
 *   **Enable/Disable Asynchronous Checkpointing (PTL ModelCheckpoint):**
     Command line: ``python your_script.py exp_manager.checkpoint_callback_params.async_save=True``
 
-It's important to note that for distributed training scenarios, especially when using NeMo's ``DistributedCheckpointIO``, model-specific flags might also influence asynchronous behavior. Flags such as ``model.enable_async_ckpt=True`` or ``model.enable_optimized_async_ckpt=True`` can provide more specialized control or optimizations for asynchronous distributed checkpoints. Refer to the :ref:`NeMo Distributed Checkpoint User Guide <dist-ckpt-user-guide-label>` for more details on these advanced distributed checkpointing options.
+It's important to note that for distributed training scenarios, especially when using NeMo's ``DistributedCheckpointIO``, model-specific flags might also influence asynchronous behavior. Flags such as ``model.enable_async_ckpt=True`` can provide more specialized control or optimizations for asynchronous distributed checkpoints. Refer to the :ref:`NeMo Distributed Checkpoint User Guide <dist-ckpt-user-guide-label>` for more details on these advanced distributed checkpointing options.
 
 Resume Training
 ---------------
@@ -436,7 +435,7 @@ Once the config has been updated, we can now run it just like any normal Hydra s
 .. code-block:: bash
 
     python script.py --config-path=ABC --config-name=XYZ -m \
-        trainer.max_steps=5000 \  # Any additional arg after -m will be passed to all the runs generated from the config !
+        trainer.max_steps=5000 \
         ...
 
 Tips and Tricks
